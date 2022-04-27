@@ -1,0 +1,261 @@
+simulation:
+  duration: 4320.  # Simulation time in hours.
+  minimumActiveAgents: 1  # Stop if the simulation has fewer than this many agents capable of transmitting the disease.
+  patience: 0  # Wait this many simulated hours after the minimumActiveAgents threshold is met to stop the simulation. 
+  seed: 12345
+
+world:
+  step: 24.  # Simulation epoch time in hours
+  resources:  # Number of resources available for severe cases.
+    NoSpecialNeeds: 5000
+    NeedsICU: 1000
+    NeedsVentilator: 1000
+
+initialConditions:
+  # These define the number of agents in the model.
+  # The total number of agents generated will be the sum
+  # of these counts, but the number generated in each
+  # category may be different than specified due to random
+  # number generation.
+  stageCounts:
+    Susceptable: 99900
+    Exposed: 100
+    # Asymptomatic: 0
+    # Symptomatic: 0
+    # Severe: 100
+
+disease:
+  # Research suggests the "attack rates" are (a) between 0.7% and 16.3% , and
+  # (2) there are higher among familial contacts.
+  # See: doi:10.1101/2020.06.06.20124446v2
+  transmissionProbabilities:
+    Household: 0.16
+    Social: 0.03
+    Community: 0.007
+
+  durations:
+    - from: Exposed
+      to: Asymptomatic
+      model:  # https://doi.org/10.7326/M20-0504
+        Kind: LogNormalDelay  # Number of hours before transitioning as a LogNormal distribution
+        Mean: 121.392  # Hours
+        Std: 36.456  # Hours
+
+    - from: Asymptomatic
+      to: Symptomatic
+      model:  # Gatto et al. (2020)
+        Kind: LogNormalDelay
+        Mean: 31.2
+        Std: 31.2
+
+    - from: Asymptomatic
+      to: Severe
+      model:  # Gatto et al. (2020)
+        Kind: LogNormalDelay
+        Mean: 31.2
+        Std: 31.2
+
+    - from: Asymptomatic
+      to: Recovered
+      model:  # Wölfel et al., 2020
+        Kind: LogNormalDelay
+        Mean: 192.0
+        Std: 48.0
+
+    - from: Symptomatic
+      to: Recovered
+      model:  # Wölfel et al., 2020
+        Kind: LogNormalDelay
+        Mean: 192.0
+        Std: 48.0
+
+    - from: Severe
+      to: Recovered
+      model:  # Verity et al., 2020
+        Kind: LogNormalDelay
+        Mean: 336.0
+        Std: 57.6
+
+    - from: Asymptomatic
+      to: Dead
+      model:  # Wölfel et al., 2020
+        Kind: LogNormalDelay
+        Mean: 192.0
+        Std: 48.0
+
+    - from: Symptomatic
+      to: Dead
+      model:  # Wölfel et al., 2020
+        Kind: LogNormalDelay
+        Mean: 192.0
+        Std: 48.0
+
+    - from: Severe
+      to: Dead
+      model:  # Verity et al., 2020
+        Kind: LogNormalDelay
+        Mean: 336.0
+        Std: 57.6
+
+demographics:
+  - category: {age: Age0_9}
+    weight: 39948.0  # ACS 2019 https://www.census.gov/data/tables/2019/demo/age-and-sex/2019-age-sex-composition.html
+    susceptability: 0.34  # Verity et al. (2020) and Ferguson et al. (2020)
+    prognosis:
+      Asymptomatic: 0.5
+      Symptomatic: 0.49986
+      Severe: 0.00014
+    mortality: 0.00002
+    hospitalNeeds:
+      NoSpecialNeeds: 1.0000
+      NeedsICU: 0.0000
+      NeedsVentilator: 0.0000
+  
+  - category: {age: Age10_19}
+    weight: 41676.0
+    susceptability: 0.67
+    prognosis:        
+      Asymptomatic: 0.45
+      Symptomatic: 0.54979
+      Severe: 0.00021
+    mortality: 0.00006
+    hospitalNeeds:
+      NoSpecialNeeds: 1.0000
+      NeedsICU: 0.0000
+      NeedsVentilator: 0.0000
+  
+  - category: {age: Age20_29}
+    weight: 44531.0
+    susceptability: 1.0
+    prognosis:
+      Asymptomatic: 0.40
+      Symptomatic: 0.5885
+      Severe: 0.01150
+    mortality: 0.00030
+    hospitalNeeds:
+      NoSpecialNeeds: 0.1701
+      NeedsICU: 0.1712
+      NeedsVentilator: 0.6586
+  
+  - category: {age: Age30_39}
+    weight: 43375.0
+    susceptability: 1.0
+    prognosis:
+      Asymptomatic: 0.35
+      Symptomatic: 0.61477
+      Severe: 0.03523
+    mortality: 0.00080
+    hospitalNeeds:
+      NoSpecialNeeds: 0.1701
+      NeedsICU: 0.1712
+      NeedsVentilator: 0.6586
+
+  - category: {age: Age40_49}
+    weight: 39929.0
+    susceptability: 1.0
+    prognosis:
+      Asymptomatic: 0.30
+      Symptomatic: 0.65486
+      Severe: 0.04514
+    mortality: 0.00150
+    hospitalNeeds:
+      NoSpecialNeeds: 0.2164
+      NeedsICU: 0.2549
+      NeedsVentilator: 0.5287
+
+  - category: {age: Age50_59}
+    weight: 41518.0
+    susceptability: 1.0
+    prognosis:
+      Asymptomatic: 0.25
+      Symptomatic: 0.66
+      Severe: 0.09000
+    mortality: 0.00600
+    hospitalNeeds:
+      NoSpecialNeeds: 0.2646
+      NeedsICU: 0.3349
+      NeedsVentilator: 0.4005
+
+  - category: {age: Age60_69}
+    weight: 37948.0
+    susceptability: 1.0
+    prognosis:
+      Asymptomatic: 0.20
+      Symptomatic: 0.6545
+      Severe: 0.14550
+    mortality: 0.02200
+    hospitalNeeds:
+      NoSpecialNeeds: 0.3041
+      NeedsICU: 0.3424
+      NeedsVentilator: 0.3535
+
+  - category: {age: Age70_79}
+    weight: 23488.0
+    susceptability: 1.0
+    prognosis:
+      Asymptomatic: 0.15
+      Symptomatic: 0.624
+      Severe: 0.22600
+    mortality: 0.05100
+    hospitalNeeds:
+      NoSpecialNeeds: 0.3616
+      NeedsICU: 0.3758
+      NeedsVentilator: 0.2626
+
+  - category: {age: Age80Plus}
+    weight: 11943.0
+    susceptability: 1.0
+    prognosis:
+      Asymptomatic: 0.10
+      Symptomatic: 0.61267
+      Severe: 0.28733
+    mortality: 0.09300
+    hospitalNeeds:
+      NoSpecialNeeds: 0.4023
+      NeedsICU: 0.3436
+      NeedsVentilator: 0.2541
+
+networks:
+  Household:
+    Kind: DenseSubnets
+    Weights: 
+      - 0.  # zero indexed
+      - .2837
+      - .3451
+      - .1507
+      - .1276
+      - .0578
+      - .0226
+      - .0125
+
+  Social:
+    Kind: NegativeBinomialCL
+    Mean: 10.
+    Dispersion: 5.
+
+communityNetwork:
+  Kind: NegativeBinomial
+  Mean: 5.
+  Dispersion: 10.
+
+# interventions:
+#   - start: 0.0  # in simulation hours
+#     stop: .inf  # in simulation hours
+#     intervention:
+#       Kind: ContactTrace
+#       NumberPerEpoch: 20  # maximum number of cases to trace per epoch
+#       IsolationTime: 336.  # in simulated hours
+#       Cooperation: 0.95  # probability that a person begins the trace
+#       Capture: # by network name (defined above)
+#         Household: 0.95  # probability that a given contact in the network is traced
+#         Social: 0.80
+#         Community: 0.50
+#   - start: 0.0  # in simulation hours
+#     stop: .inf  # in simulation hours
+#     intervention:
+#       Kind: RandomTest
+#       FractionPerEpoch: 0.001  # probability of test per agent per epoch
+#       NumberPerEpoch: 20  # maximum test capacity per epoch--overrides FractionPerEpoch
+#       # ResultsDelay: 48.  # in simulated hours
+#       IsolationTime: 336.  # in simulated hours
+#       Cooperation: 0.95  # probability that a person will accept being tested
