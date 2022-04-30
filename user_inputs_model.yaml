@@ -98,7 +98,7 @@ disease:
         Std: 57.6
 
 demographics:
-  - category: {age: Age0_9}
+  - category: [0,9]
     weight: 39948.0  # ACS 2019 https://www.census.gov/data/tables/2019/demo/age-and-sex/2019-age-sex-composition.html
     susceptability: 0.34  # Verity et al. (2020) and Ferguson et al. (2020)
     prognosis:
@@ -111,7 +111,7 @@ demographics:
       NeedsICU: 0.0000
       NeedsVentilator: 0.0000
   
-  - category: {age: Age10_19}
+  - category: [10,19]
     weight: 41676.0
     susceptability: 0.67
     prognosis:        
@@ -124,7 +124,7 @@ demographics:
       NeedsICU: 0.0000
       NeedsVentilator: 0.0000
   
-  - category: {age: Age20_29}
+  - category: [20,29]
     weight: 44531.0
     susceptability: 1.0
     prognosis:
@@ -137,7 +137,7 @@ demographics:
       NeedsICU: 0.1712
       NeedsVentilator: 0.6586
   
-  - category: {age: Age30_39}
+  - category: [30,39]
     weight: 43375.0
     susceptability: 1.0
     prognosis:
@@ -150,7 +150,7 @@ demographics:
       NeedsICU: 0.1712
       NeedsVentilator: 0.6586
 
-  - category: {age: Age40_49}
+  - category: [40,49]
     weight: 39929.0
     susceptability: 1.0
     prognosis:
@@ -163,7 +163,7 @@ demographics:
       NeedsICU: 0.2549
       NeedsVentilator: 0.5287
 
-  - category: {age: Age50_59}
+  - category: [50,59]
     weight: 41518.0
     susceptability: 1.0
     prognosis:
@@ -176,7 +176,7 @@ demographics:
       NeedsICU: 0.3349
       NeedsVentilator: 0.4005
 
-  - category: {age: Age60_69}
+  - category: [60,69]
     weight: 37948.0
     susceptability: 1.0
     prognosis:
@@ -189,7 +189,7 @@ demographics:
       NeedsICU: 0.3424
       NeedsVentilator: 0.3535
 
-  - category: {age: Age70_79}
+  - category: [70,79]
     weight: 23488.0
     susceptability: 1.0
     prognosis:
@@ -202,7 +202,7 @@ demographics:
       NeedsICU: 0.3758
       NeedsVentilator: 0.2626
 
-  - category: {age: Age80Plus}
+  - category: [80,115]
     weight: 11943.0
     susceptability: 1.0
     prognosis:
