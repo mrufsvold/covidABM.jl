@@ -1,6 +1,7 @@
 using Revise
 include("./agent/person.jl")
 include("./input.jl")
+include("./space/network.jl")
 
 
 using .person
@@ -15,3 +16,4 @@ properties = Dict(:inputs => inputs)
 model = ABM(Person, space; properties)
 
 add_people!(model)
+network.communitynetwork!(model, 4, 8, 2)
