@@ -1,6 +1,6 @@
 module stage_enum
-export stages
-const stages = Dict(
+export stages_map
+const stages_map = Dict(
     "Susceptable" => 0,
     "Exposed" =>  1,
     "Asymptomatic" =>  2,

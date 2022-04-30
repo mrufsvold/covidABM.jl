@@ -1,6 +1,7 @@
-
+using Revise
 include("./agent/person.jl")
 include("./input.jl")
+
 
 using .person
 using .input
@@ -12,3 +13,5 @@ const total_people = sum(values(inputs.InitialConditions.StageCounts))
 space = GraphSpace(SimpleGraph(total_people))
 properties = Dict(:inputs => inputs)
 model = ABM(Person, space; properties)
+
+add_people!(model)

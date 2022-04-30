@@ -1,9 +1,16 @@
 module person
+
 using Agents
+using StatsBase
+using Random
+
 include("../disease/progression.jl")
 using .progression
+include("../input.jl")
+using .input
+include("../disease/stages_enum.jl")
 
-export Person
+export Person, add_people!
 
 @agent Person GraphAgent begin
 
@@ -11,7 +18,7 @@ export Person
 	Born::Float64
 
 	# Demographic categorizes the Person into a risk category based on demograpics.
-	Demographic::Dict{String, String}
+	Demographic::Tuple{Int64,Int64}
 
 	# Prognosis is the pre-determined prognosis of the Person the disease is contracted.
 	Prognosis::Dict{String, Float64}
@@ -52,9 +59,58 @@ export Person
 
 	# lastTransition is when the last disease transition occured
 	lastTransition::Float64
+
+end
+
+Person(id, pos; Born,Demographic,Prognosis,HospitalNeed,Susceptability,selfIsolating,stopIsolating,StartingStage,stage,DiseaseProgression,lastTransition) = Person(id, pos, Born,Demographic,Prognosis,HospitalNeed,Susceptability,selfIsolating,stopIsolating,StartingStage,stage,DiseaseProgression,lastTransition)
+
+
+
+function set_age(age_cat::Tuple{Int64,Int64})::Float64
+    # Return hours born before simulation
+    years_old = rand(age_cat[1]:age_cat[2])
+    return -years_old*365.25*24
 end
 
 
+function add_people!(model::AgentBasedModel)
+	
+    demoweights = StatsBase.weights([demo.Weight for demo in model.inputs.Demographics])
+    stages_map = stage_enum.stages_map
+    for (stage, count) in pairs(model.inputs.InitialConditions.StageCounts)
+        stage_id = stages_map[stage]
+        for n in 1:count
+            # Sample a demographic
+            demo = model.inputs.Demographics[StatsBase.sample(demoweights)]
+
+            add_agent!(
+                n, 
+                model,
+                Born = set_age(demo.Category),
+                Demographic = demo.Category,
+                Prognosis = demo.Prognosis,
+                HospitalNeed = demo.HospitalNeeds,
+                Susceptability = demo.Susceptibility,
+                selfIsolating = false,
+                stopIsolating = 0,
+                StartingStage = stage_id,
+                stage = stage_id,
+                # TODO: figure out how the stage length works
+                DiseaseProgression = disease_schedule(0,stage_id),
+                lastTransition = 0
+                )
+        end
+    end
+end
+
+
+
+function agent_step!(agent::Person, model::Agents.ABM)
+	# Advance a person by a step in the simulation
+
+
+	
+end
 
 
 end  

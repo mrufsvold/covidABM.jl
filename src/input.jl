@@ -1,7 +1,7 @@
 module input
 using YAML
 
-export ReadInputs
+export ReadInputs, Inputs
 
 struct simulation
     Duration::              Float64 #yaml:"duration" flag:"duration|4320.|Length of simulation in hours"
@@ -48,12 +48,15 @@ end
 
 
 struct demographics
-    Category::      Dict{String, String}
+    Category::      Tuple{Int64, Int64}
     Weight::        Float64
     Susceptibility::Float64
     Prognosis::     Dict{String, Float64}
     Mortality::     Float64
     HospitalNeeds:: Dict{String, Float64}
+end
+function demographics(category::Vector{Int64},w,s,p,m,h)
+    demographics(tuple(category...), w,s,p,m,h)
 end
 
 struct Inputs
