@@ -3,7 +3,6 @@ include("./agent/person.jl")
 include("./input.jl")
 include("./space/network.jl")
 
-
 using .person
 using .input
 using Agents
@@ -16,4 +15,6 @@ properties = Dict(:inputs => inputs)
 model = ABM(Person, space; properties)
 
 add_people!(model)
-network.communitynetwork!(model, 4, 8, 2)
+
+using BenchmarkTools
+@benchmark network.communitynetwork!(model, 2, 6, 1)
