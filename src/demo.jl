@@ -1,3 +1,5 @@
+
+using BenchmarkTools
 using Revise
 include("./agent/person.jl")
 include("./input.jl")
@@ -16,5 +18,5 @@ model = ABM(Person, space; properties)
 
 add_people!(model)
 
-using BenchmarkTools
-@benchmark network.communitynetwork!(model, 2, 6, 1)
+network.communitynetwork!(model, 2, 6, 1)
+

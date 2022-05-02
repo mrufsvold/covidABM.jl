@@ -21,11 +21,11 @@ export Person, add_people!
 	Demographic::Tuple{Int64,Int64}
 
 	# Prognosis is the pre-determined prognosis of the Person the disease is contracted.
-	Prognosis::Dict{String, Float64}
+	Prognosis::String
 
 	# HospitalNeed is a fixed feature of the Person and determines what resources of the hospital
 	# the Person will use if the disease symptoms are severe.
-	HospitalNeed::Dict{String, Float64}
+	HospitalNeed::String
 
 	# Susceptability is how susceptable the person is to being exposed.
 	# This could be changed to, for instance, model the use of masks.
@@ -72,6 +72,9 @@ function set_age(age_cat::Tuple{Int64,Int64})::Float64
     return -years_old*365.25*24
 end
 
+function pick_key_by_weights(cats::Dict{String, Float64})
+	sample(collect(keys(cats)),StatsBase.Weights(collect(values(cats))))
+end
 
 function add_people!(model::AgentBasedModel)
 	
@@ -88,8 +91,8 @@ function add_people!(model::AgentBasedModel)
                 model,
                 Born = set_age(demo.Category),
                 Demographic = demo.Category,
-                Prognosis = demo.Prognosis,
-                HospitalNeed = demo.HospitalNeeds,
+                Prognosis = pick_key_by_weights(demo.Prognosis),
+                HospitalNeed = pick_key_by_weights(demo.HospitalNeeds),
                 Susceptability = demo.Susceptibility,
                 selfIsolating = false,
                 stopIsolating = 0,
