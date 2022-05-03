@@ -15,6 +15,7 @@ neighbor_counts(g::AbstractGraph) = length.(neighbors.(Ref(g),vertices(g)))
 
 function communitynetwork!(model, mean_conns::Int64, max_conns::Int64, min_conns::Int64)
     disconnect!(model)
+    println("Disconnected the network")
     g = model.space.graph
 
     # start network with a random connection
@@ -25,19 +26,21 @@ function communitynetwork!(model, mean_conns::Int64, max_conns::Int64, min_conns
         v2 = rand(vertices(g))
     end
     add_edge!(model,v1,v2)
-
+    println("Added the first edge")
     # Do fast edge adding with shuffle until we almost reach mean connection number
     verts = vertices(g)
     average_conns = mean(neighbor_counts(g))
     while average_conns < mean_conns - 1
-        for (v1,v2) in zip(verts, shuffle(verts))
-            if v1 != v2 & length(neighbors(g,v1)) < max_conns & length(neighbors(g,v2)) < max_conns
+        shuffled_verts = shuffle(verts)
+        for (v1,v2) in zip(verts, shuffled_verts)
+            if (v1 != v2) & (length(neighbors(g,v1)) < max_conns) & (length(neighbors(g,v2)) < max_conns)
                 add_edge!(model, v1,v2)
             end
         end
         average_conns = mean(neighbor_counts(g))
+        println(average_conns)
     end
-
+    println("completed initial pairings")
     # Go back through to connect any insufficiently connected nodes
     insufficient = verts[neighbor_counts(g) .< min_conns]
     while length(insufficient) > 0
@@ -51,7 +54,7 @@ function communitynetwork!(model, mean_conns::Int64, max_conns::Int64, min_conns
         end
         insufficient = verts[neighbor_counts(g) .< min_conns]
     end
-
+    println("Connected all insufficient nodes")
     # Clean up any over connected nodes
     for v in verts[neighbor_counts(g) .> max_conns]  
         neigh_verts = [(nv, length(neighbors(g,v))) for nv in neighbors(g,v)]
@@ -63,7 +66,7 @@ function communitynetwork!(model, mean_conns::Int64, max_conns::Int64, min_conns
             end
         end
     end
-    
+    print("cleaned up the graph")
 end
 
 

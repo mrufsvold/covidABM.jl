@@ -3,12 +3,14 @@ module person
 using Agents
 using StatsBase
 using Random
+using Graphs
 
 include("../disease/progression.jl")
 using .progression
 include("../input.jl")
 using .input
 include("../disease/stages_enum.jl")
+include("../utils.jl")
 
 export Person, add_people!
 
@@ -65,23 +67,24 @@ end
 Person(id, pos; Born,Demographic,Prognosis,HospitalNeed,Susceptability,selfIsolating,stopIsolating,StartingStage,stage,DiseaseProgression,lastTransition) = Person(id, pos, Born,Demographic,Prognosis,HospitalNeed,Susceptability,selfIsolating,stopIsolating,StartingStage,stage,DiseaseProgression,lastTransition)
 
 
-
 function set_age(age_cat::Tuple{Int64,Int64})::Float64
     # Return hours born before simulation
     years_old = rand(age_cat[1]:age_cat[2])
     return -years_old*365.25*24
 end
 
+
 function pick_key_by_weights(cats::Dict{String, Float64})
 	sample(collect(keys(cats)),StatsBase.Weights(collect(values(cats))))
 end
 
+
 function add_people!(model::AgentBasedModel)
 	
     demoweights = StatsBase.weights([demo.Weight for demo in model.inputs.Demographics])
-    stages_map = stage_enum.stages_map
+    stages = stage_enum.stages
     for (stage, count) in pairs(model.inputs.InitialConditions.StageCounts)
-        stage_id = stages_map[stage]
+        stage_id = utils.indexin(stage, stages)
         for n in 1:count
             # Sample a demographic
             demo = model.inputs.Demographics[StatsBase.sample(demoweights)]
@@ -110,8 +113,34 @@ end
 
 function agent_step!(agent::Person, model::Agents.ABM)
 	# Advance a person by a step in the simulation
+	
+	stage = stage_enum.stages[agent.stage]
 
+	if stage == "Susceptable"
+		infect!(agent, model)
+	end
 
+end
+
+# Person might get sick if they are in contact with sick people
+function infect!(agent::Person, model::Agents.ABM)
+	agent_neighbors = neighbors(model.space.graph, agent.pos)
+	infect = false
+	for an in agent_neighbors
+		if in(model[an].stage, stage_enum.infectious) & ~model[an].selfIsolating
+			infect = infect | StatsBase.sample(
+				(true, false), 
+				StatsBase.weights(
+					[model.inputs.Disease.TransmissionProbabilities.Social,
+					1 - model.inputs.Disease.TransmissionProbabilities.Social]
+					)
+				)
+		end
+	end	
+	if infect
+		agent.stage += 1
+	end
+	
 	
 end
 
