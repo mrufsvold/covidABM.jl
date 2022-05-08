@@ -8,4 +8,5 @@ struct disease_schedule
 	Stage::Int64
 
 end
+
 end

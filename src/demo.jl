@@ -14,7 +14,7 @@ const total_people = sum(values(inputs.InitialConditions.StageCounts))
 space = GraphSpace(SimpleGraph(total_people))
 properties = Dict(
     :inputs => inputs,
-    :Time => 0
+    :Time => 0.0
     )
 model = ABM(Person, space; properties)
 

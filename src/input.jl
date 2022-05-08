@@ -1,7 +1,7 @@
 module input
 using YAML
 
-export ReadInputs, Inputs
+export ReadInputs, Inputs, durationmodel, duration
 
 struct simulation
     Duration::              Float64 #yaml:"duration" flag:"duration|4320.|Length of simulation in hours"

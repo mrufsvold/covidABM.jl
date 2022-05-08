@@ -33,7 +33,7 @@ function communitynetwork!(model, mean_conns::Int64, max_conns::Int64, min_conns
     while average_conns < mean_conns - 1
         shuffled_verts = shuffle(verts)
         for (v1,v2) in zip(verts, shuffled_verts)
-            if (v1 != v2) & (length(neighbors(g,v1)) < max_conns) & (length(neighbors(g,v2)) < max_conns)
+            if (v1 != v2) && (length(neighbors(g,v1)) < max_conns) && (length(neighbors(g,v2)) < max_conns)
                 add_edge!(model, v1,v2)
             end
         end
@@ -88,9 +88,9 @@ function filter_communitynetwork!(model, mean_conns::Int64, max_conns::Int64, mi
     insufficient_edges = filter(v -> length(neighbors(g,v)) < min_conns, vertices(g))
 
     i = 0
-    while (length(insufficient_edges) > 0 | (mean(neighbor_counts(g)) < mean_conns)) & i < 10000
+    while (length(insufficient_edges) > 0 | (mean(neighbor_counts(g)) < mean_conns)) && i < 10000
         # Find vertices that have fewer than the max number of connections and already connected to the network
-        not_maxed_vertices = filter(v -> (length(neighbors(g,v)) < max_conns) & (length(neighbors(g,v)) >= 0), vertices(g))
+        not_maxed_vertices = filter(v -> (length(neighbors(g,v)) < max_conns) && (length(neighbors(g,v)) >= 0), vertices(g))
         
         # The first vertice should be one of the insufficient ones, if there are any left
         # Otherwise, grab one that isn't maxed
