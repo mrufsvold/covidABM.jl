@@ -4,6 +4,13 @@ using Graphs
 using Statistics
 using Random
 
+function model_step!(model::ABM)
+
+    model.Time += model.Time_Increment
+    
+end
+
+
 function disconnect!(model)
     g = model.space.graph 
     for e in edges(g)

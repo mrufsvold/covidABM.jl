@@ -214,13 +214,21 @@ function get_next_stage(current_stage::String, prognosis::String, mortality::Flo
 		return stage_idx("Exposed")
 	elseif current_stage == "Exposed"
 		return stage_idx("Asymptomatic")
+	# TODO: This is broken because I don't have a clean way of differentiating between
+	# Asymptomatic as a step in a progression toward symptomatic 
+	# vs Asymptomatic as a final condition that lasts throughout the illness
+	# This means that people who are Asymptomatic are sick for too short a time
+	elseif current_stage == prognosis == "Asymptomatic"
+		return stage_idx("Recovered")
 	elseif current_stage == "Asymptomatic"
 		return stage_idx(prognosis)
 	elseif current_stage == "Severe" || current_stage == "Symptomatic"
 		new_status = utils.boolsample(mortality) ? "Dead" : "Recovered"
 		return stage_idx(new_status)
 	end
+	throw(ErrorException("Could not match a status for $current_stage with prog $prognosis and mort $mortality"))
 end
+
 
 
 "Move the person to the next stage in the disease"
@@ -228,8 +236,8 @@ function setprogression!(agent::Person, model::Agents.ABM)
 	# Get the predetermined upcoming stage
 	next_stage = stage_name(agent.DiseaseProgression.Stage)
 
-	if next_stage == "Recovered"
-		updateagent!(agent, next_stage, model.Time, Inf, stage_idx("Recovered"))
+	if next_stage in ["Recovered", "Dead"]
+		updateagent!(agent, next_stage, model.Time, Inf, stage_idx(next_stage))
 		return
 	end
 	# Get the stage that we will change to next
