@@ -1,12 +1,26 @@
 module stage_enum
-export stages_map
-const stages_map = Dict(
-    "Susceptable" => 0,
-    "Exposed" =>  1,
-    "Asymptomatic" =>  2,
-    "Symptomatic" =>  3,
-    "Severe" =>  4,
-    "Recovered" => 5,
-    "Dead" =>  6
+include("../utils.jl")
+export stage_name, stage_idx
+const stages = (
+    "Susceptable",
+    "Exposed" ,
+    "Asymptomatic" ,
+    "Symptomatic" ,
+    "Severe" ,
+    "Recovered",
+    "Dead"
 )
+
+const infectious = (
+    "Asymptomatic" ,
+    "Symptomatic" 
+)
+
+"Get the stage string from an index of the stage_enum"
+stage_name(s::Int64)::String = stage_enum.stages[s]
+"Get the index of a stage from its name."
+stage_idx(s::String)::Int64 = utils.indexin(s,stage_enum.stages)
+
+
 end
+
